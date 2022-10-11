@@ -52,7 +52,7 @@ const string ShortcutKeyText() {
 
 // in scripts
 void RenderMenu() {
-    if (UI::MenuItem("\\$f11" + Icons::VideoCamera + "\\$z Record Vehicle Raw Data", ShortcutKeyText(), Setting_Enabled)) {
+    if (UI::MenuItem("\\$f11" + Icons::VideoCamera + "\\$z Record Raw Vehicle Data", ShortcutKeyText(), Setting_Enabled)) {
         Setting_Enabled = !Setting_Enabled;
         if (!Setting_Enabled && g_isRecording) {  // check if we need to stop recording
             startnew(OnRecordingToggle);
@@ -68,7 +68,7 @@ void RenderMenuMain() {
         shortcutKey = " \\$bbb(" + ShortcutKeyText() + ")";
     }
     statusMsg = GenStatusString() + shortcutKey;
-    if (UI::BeginMenu("\\$f11" + Icons::Circle + "\\$z RVRD: " + statusMsg + "##recVechildRawMenuMain", !g_currentlySavingRecording)) {
+    if (UI::BeginMenu("\\$f11" + Icons::Circle + "\\$z RRVD: " + statusMsg + "##recVechildRawMenuMain", !g_currentlySavingRecording)) {
         // when the menu opens, we want to change the state. That will change the label -> close the menu.
         // this ~mimics clicking a button
         UI::EndMenu();
@@ -95,9 +95,9 @@ uint FramesRecorded() {
 }
 
 void NotifyStatus(const string &in msg, uint time = 5000) {
-    UI::ShowNotification("Record Vehicle Raw Data", msg, vec4(.2, .6, 0, .3), time);
+    UI::ShowNotification("Record Raw Vehicle Data", msg, vec4(.2, .6, 0, .3), time);
 }
 
 void NotifyWarn(const string &in msg) {
-    UI::ShowNotification("Record Vehicle Raw Data", msg, vec4(.8, .2, .1, .3), 10000);
+    UI::ShowNotification("Record Raw Vehicle Data", msg, vec4(.8, .2, .1, .3), 10000);
 }
