@@ -3,17 +3,19 @@ bool g_isRecording = false;
 void Main() {}
 
 void Update(float dt) {
-    if (Setting_Enabled && g_isRecording && IsInGame())
+    if (Setting_Enabled && g_isRecording && IsInGame(true))
         RecordPosition();
 }
 
-bool IsInGame() {
+bool IsInGame(bool checkIfPlaying = false) {
     auto app = cast<CTrackMania>(GetApp());
     if (app.RootMap is null) return false;
     try {
+        if (checkIfPlaying) {
+            auto gt = cast<CGameTerminal>(app.CurrentPlayground.GameTerminals[0]);
+            return gt.UISequence_Current == SGamePlaygroundUIConfig::EUISequence::Playing;
+        }
         return true;
-        // auto gt = cast<CGameTerminal>(app.CurrentPlayground.GameTerminals[0]);
-        // return gt.UISequence_Current == SGamePlaygroundUIConfig::EUISequence::Playing;
     } catch {
         // trace('exception: ' + getExceptionInfo());
     }
