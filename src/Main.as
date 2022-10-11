@@ -14,7 +14,7 @@ bool IsInGame() {
         auto gt = cast<CGameTerminal>(app.CurrentPlayground.GameTerminals[0]);
         return gt.UISequence_Current == SGamePlaygroundUIConfig::EUISequence::Playing;
     } catch {
-        trace('exception: ' + getExceptionInfo());
+        // trace('exception: ' + getExceptionInfo());
     }
     return false;
 }
