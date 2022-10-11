@@ -102,7 +102,7 @@ class VehiclePosition {
 }
 
 const string Vec3ToRS(vec3 v) {
-    return "(" + string::Join({tostring(v.x), tostring(v.y), tostring(v.z)}, ", ") + ")";
+    return "vec3(" + string::Join({tostring(v.x), tostring(v.y), tostring(v.z)}, "; ") + ")"; // use something other than ',' so CSV parsing is easier
 }
 Json::Value Vec3ToJson(vec3 v) {
     auto ret = Json::Array();
