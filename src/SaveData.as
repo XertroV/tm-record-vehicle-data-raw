@@ -1,6 +1,7 @@
 uint g_savedSoFar = 0;
-uint saveIncrementsAllowMs = 2;
-uint lastStart = 0;
+bool g_currentlySavingRecording = false;
+uint lastStart = 0;  // for yielding while saving
+uint saveIncrementsAllowMs = 2;  // max execution ms without yielding
 
 void SaveData() {
     NotifyStatus("Saving data from " + FramesRecorded() + " frames.");

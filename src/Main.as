@@ -54,26 +54,31 @@ const string ShortcutKeyText() {
 void RenderMenu() {
     if (UI::MenuItem("\\$f11" + Icons::VideoCamera + "\\$z Record Vehicle Raw Data", ShortcutKeyText(), Setting_Enabled)) {
         Setting_Enabled = !Setting_Enabled;
-        if (!Setting_Enabled && g_isRecording) {
+        if (!Setting_Enabled && g_isRecording) {  // check if we need to stop recording
             startnew(OnRecordingToggle);
         }
     }
 }
 
-bool g_currentlySavingRecording = false;
-
+string statusMsg = "";
 void RenderMenuMain() {
     if (!Setting_Enabled) return;
     string shortcutKey = "";
     if (Setting_ShortcutKeyEnabled) {
         shortcutKey = " \\$bbb(" + ShortcutKeyText() + ")";
     }
-    string status = GenStatusString() + shortcutKey;
-    if (UI::BeginMenu("\\$f11" + Icons::Circle + "\\$z RVRD: " + status, !g_currentlySavingRecording)) {
+    statusMsg = GenStatusString() + shortcutKey;
+    if (UI::BeginMenu("\\$f11" + Icons::Circle + "\\$z RVRD: " + statusMsg + "##recVechildRawMenuMain", !g_currentlySavingRecording)) {
         // when the menu opens, we want to change the state. That will change the label -> close the menu.
         // this ~mimics clicking a button
         UI::EndMenu();
+    }
+    if (UI::IsItemClicked())
         startnew(OnRecordingToggle);
+    if (!g_currentlySavingRecording && UI::IsItemHovered()) {
+        UI::BeginTooltip();
+        UI::Text("Click to " + (g_isRecording ? "stop" : "start") + " recording; or press " + ShortcutKeyText());
+        UI::EndTooltip();
     }
 }
 
