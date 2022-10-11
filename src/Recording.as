@@ -1,7 +1,6 @@
 // per frame
 array<VehiclePosition@> positions;
 
-
 string LastRecordedMap = "";
 
 void OnRecordingToggle() {

@@ -3,8 +3,20 @@ bool g_isRecording = false;
 void Main() {}
 
 void Update(float dt) {
-    if (Setting_Enabled && g_isRecording)
+    if (Setting_Enabled && g_isRecording && IsInGame())
         RecordPosition();
+}
+
+bool IsInGame() {
+    auto app = cast<CTrackMania>(GetApp());
+    if (app.RootMap is null) return false;
+    try {
+        auto gt = cast<CGameTerminal>(app.CurrentPlayground.GameTerminals[0]);
+        return gt.UISequence_Current == SGamePlaygroundUIConfig::EUISequence::Playing;
+    } catch {
+        trace('exception: ' + getExceptionInfo());
+    }
+    return false;
 }
 
 bool keyDown_ctrl = false;
@@ -68,7 +80,7 @@ void RenderMenuMain() {
         shortcutKey = " \\$bbb(" + ShortcutKeyText() + ")";
     }
     statusMsg = GenStatusString() + shortcutKey;
-    if (UI::BeginMenu("\\$f11" + Icons::Circle + "\\$z RRVD: " + statusMsg + "##recVechildRawMenuMain", !g_currentlySavingRecording)) {
+    if (UI::BeginMenu("\\$f11" + Icons::Circle + "\\$z RRVD: " + statusMsg + "##recVechildRawMenuMain", !g_currentlySavingRecording && (g_isRecording || IsInGame()))) {
         // when the menu opens, we want to change the state. That will change the label -> close the menu.
         // this ~mimics clicking a button
         UI::EndMenu();
