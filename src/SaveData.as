@@ -1,6 +1,8 @@
 uint g_savedSoFar = 0;
 bool g_currentlySavingRecording = false;
 uint lastStart = 0;  // for yielding while saving
+
+[Setting category="Performance" name="Frametime Overhead Limit Whilst Saving (ms)" min="0" max="9" description="Take 1+value miliseconds per-frame on average when saving vehicle data. Increase to save faster but increase frame times. At low values there will be no impact (CPU dependent)."]
 uint saveIncrementsAllowMs = 2;  // max execution ms without yielding
 
 void SaveData() {

@@ -37,7 +37,7 @@ UI::InputBlocking OnKeyPress(bool down, VirtualKey key) {
 
 // if modifier conditions are met, enable the plugin, or toggle recording
 void OnShortcutKeyPress() {
-    if (g_currentlySavingRecording) return; // don't do anything if we're actively saving
+    if (g_currentlySavingRecording || (!g_isRecording && !IsInGame())) return; // don't do anything if we're actively saving or not recording and not in game
     // modifiers
     bool modifiersOkay = true
         && (!Setting_ModifierCtrl || keyDown_ctrl)
