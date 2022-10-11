@@ -1,155 +1,108 @@
-enum Cmp {Lt = -1, Eq = 0, Gt = 1}
+// this fools vscode-openplanet-angelscript 0.1.0 b/c [Setting] breaks it
+#if false
+    bool Setting_Enabled = false;
+    bool Setting_ShortcutKeyEnabled = true;
+    VirtualKey Setting_ShortcutKeyChoice = VirtualKey::F9;
+    bool Setting_ModifierCtrl = false;
+    bool Setting_ModifierAlt = false;
+    bool Setting_ModifierShift = false;
+#endif
 
-void Main() {
-    startnew(MainCoro);
-}
+bool g_isRecording = false;
+
+void Main() {}
 
 void Update(float dt) {
-    if (Setting_DrawTrails)
-        DrawPlayers();
+    if (Setting_Enabled && g_isRecording)
+        RecordPosition();
 }
 
+bool keyDown_ctrl = false;
+bool keyDown_alt = false;
+bool keyDown_shift = false;
+
+UI::InputBlocking OnKeyPress(bool down, VirtualKey key) {
+    if (!Setting_ShortcutKeyEnabled) return UI::InputBlocking::DoNothing;
+    switch (key) {
+        case VirtualKey::Control: keyDown_ctrl = down; break;
+        case VirtualKey::Menu: keyDown_alt = down; break;
+        case VirtualKey::Shift: keyDown_shift = down; break;
+    }
+    if (key == Setting_ShortcutKeyChoice && down)
+        OnShortcutKeyPress();
+    return UI::InputBlocking::DoNothing;
+}
+
+// if modifier conditions are met, enable the plugin, or toggle recording
+void OnShortcutKeyPress() {
+    if (g_currentlySavingRecording) return; // don't do anything if we're actively saving
+    // modifiers
+    bool modifiersOkay = true
+        && (!Setting_ModifierCtrl || keyDown_ctrl)
+        && (!Setting_ModifierAlt || keyDown_alt)
+        && (!Setting_ModifierShift || keyDown_shift);
+    if (!modifiersOkay) return;
+    // if the plugin isn't enabled, then enable it
+    if (!Setting_Enabled) {
+        Setting_Enabled = true;
+        return; // but don't start recording
+    }
+    // main action
+    startnew(OnRecordingToggle);
+}
+
+const string ShortcutKeyText() {
+    string ret = "";
+    if (Setting_ModifierCtrl) ret += "Ctrl + ";
+    if (Setting_ModifierAlt) ret += "Alt + ";
+    if (Setting_ModifierShift) ret += "Shift + ";
+    ret += tostring(Setting_ShortcutKeyChoice);
+    return ret;
+}
+
+// in scripts
 void RenderMenu() {
-    if (UI::MenuItem("\\$d8f" + Icons::LongArrowRight + Icons::LongArrowRight + Icons::Kenney::Car + "\\$z Player Trails", "", Setting_DrawTrails)) {
-        Setting_DrawTrails = !Setting_DrawTrails;
-    }
-}
-
-const string MsToSeconds(int t) {
-    return Text::Format("%.3f", float(t) / 1000.0);
-}
-
-CTrackMania@ get_app() {
-    return cast<CTrackMania>(GetApp());
-}
-
-CGameManiaAppPlayground@ get_cmap() {
-    return app.Network.ClientManiaAppPlayground;
-}
-
-string lastMap = "";
-
-void MainCoro() {
-    while (true) {
-        sleep(100);
-        if (lastMap != CurrentMap) {
-            lastMap = CurrentMap;
-            OnMapChange();
+    if (UI::MenuItem("\\$f11" + Icons::VideoCamera + "\\$z Record Vehicle Raw Data", ShortcutKeyText(), Setting_Enabled)) {
+        Setting_Enabled = !Setting_Enabled;
+        if (!Setting_Enabled && g_isRecording) {
+            startnew(OnRecordingToggle);
         }
     }
 }
 
-void OnMapChange() {
-    trails.DeleteAll();
-    visLookup.DeleteAll();
-}
+bool g_currentlySavingRecording = false;
 
-string get_CurrentMap() {
-    auto map = GetApp().RootMap;
-    if (map is null) return "";
-    return map.MapInfo.MapUid;
-}
-
-// current playground
-CSmArenaClient@ get_cp() {
-    return cast<CSmArenaClient>(GetApp().CurrentPlayground);
-}
-
-string _localUserLogin;
-string get_LocalUserLogin() {
-    if (_localUserLogin.Length == 0) {
-        auto pcsa = GetApp().Network.PlaygroundClientScriptAPI;
-        if (pcsa !is null && pcsa.LocalUser !is null) {
-            _localUserLogin = pcsa.LocalUser.Login;
-        }
+void RenderMenuMain() {
+    if (!Setting_Enabled) return;
+    string shortcutKey = "";
+    if (Setting_ShortcutKeyEnabled) {
+        shortcutKey = " \\$bbb(" + ShortcutKeyText() + ")";
     }
-    return _localUserLogin;
-}
-
-string _localUserName;
-string get_LocalUserName() {
-    if (_localUserName.Length == 0) {
-        auto pcsa = GetApp().Network.PlaygroundClientScriptAPI;
-        if (pcsa !is null && pcsa.LocalUser !is null) {
-            _localUserName = pcsa.LocalUser.Name;
-        }
-    }
-    return _localUserName;
-}
-
-dictionary@ trails = dictionary();
-dictionary@ visLookup = dictionary();
-
-void DrawPlayers() {
-    auto cpg = cast<CSmArenaClient>(GetApp().CurrentPlayground);
-    if (cpg is null) return;
-    auto scene = cpg.GameScene;
-    if (!Setting_IncludeGhosts) {
-        auto players = cpg.Players;
-        for (uint i = 0; i < players.Length; i++) {
-            auto player = cast<CSmPlayer>(players[i]);
-            if (player is null || (Setting_ExcludePlayer && player.User.Login == LocalUserLogin)) continue;
-            auto vis = cast<CSceneVehicleVis>(visLookup[player.User.Name]);
-            if (vis is null) {
-                @vis = VehicleState::GetVis(scene, player);
-                @visLookup[player.User.Name] = vis;
-            }
-            if (vis is null) continue; // something went wrong
-
-            auto trail = cast<PlayerTrail>(trails[player.User.Name]);
-            if (trail is null) {
-                @trail = PlayerTrail();
-                @trails[player.User.Name] = trail;
-            }
-            trail.AddPoint(vis.AsyncState.Position, vis.AsyncState.Dir, vis.AsyncState.Left);
-            trail.DrawPath();
-        }
-    } else {
-        // probs a bit faster, but also draws ghosts
-        auto allVis = VehicleState::GetAllVis(scene);
-        for (uint i = 0; i < allVis.Length; i++) {
-            auto vis = allVis[i];
-            string key = 'vis-' + i; // I expect this will change when players join/leave, but it shouldn't matter to much to drawing the trails
-            auto trail = cast<PlayerTrail>(trails[key]);
-            if (trail is null) {
-                @trail = PlayerTrail();
-                @trails[key] = trail;
-            }
-            trail.AddPoint(vis.AsyncState.Position, vis.AsyncState.Dir, vis.AsyncState.Left);
-            trail.DrawPath();
-        }
+    string status = GenStatusString() + shortcutKey;
+    if (UI::BeginMenu("\\$f11" + Icons::Circle + "\\$z RVRD: " + status, !g_currentlySavingRecording)) {
+        // when the menu opens, we want to change the state. That will change the label -> close the menu.
+        // this ~mimics clicking a button
+        UI::EndMenu();
+        startnew(OnRecordingToggle);
     }
 }
 
-void DrawIndicator(CSceneVehicleVisState@ vis) {
-    if (Camera::IsBehind(vis.Position)) return;
-    auto uv = Camera::ToScreenSpace(vis.Position); // possible div by 0
-    auto gear = vis.CurGear;
-    vec4 col;
-    switch(gear) {
-        case 0: col = vec4(.1, .1, .5, .5); break;
-        case 1: col = vec4(.1, .4, .9, .5); break;
-        case 2: col = vec4(.1, .9, .4, .5); break;
-        case 3: col = vec4(.4, .9, .4, .5); break;
-        case 4: col = vec4(.9, .4, .1, .5); break;
-        case 5: col = vec4(.9, .1, .1, .5); break;
-        default: col = vec4(.9, .1, .6, .5); print('unknown gear: ' + gear);
-    }
-    DrawPlayerIndicatorAt(uv, col);
+const string GenStatusString() {
+    if (g_currentlySavingRecording)
+        return "Saving (" + g_savedSoFar + " / " + FramesRecorded() + ")";
+    if (!g_isRecording)
+        return "Not Recording";
+    return "Recording (" + FramesRecorded() + " frames)";
 }
 
-void DrawPlayerIndicatorAt(vec2 uv, vec4 col) {
-    nvg::BeginPath();
-    nvg::RoundedRect(uv - vec2(20, 20)/2, vec2(20, 20), 4);
-    nvg::FillColor(col);
-    nvg::Fill();
-    nvg::ClosePath();
+uint FramesRecorded() {
+    return positions.Length;
 }
 
+void NotifyStatus(const string &in msg, uint time = 5000) {
+    UI::ShowNotification("Record Vehicle Raw Data", msg, vec4(.2, .6, 0, .3), time);
+}
 
-void DrawPlayerIndicatorAt(vec2 uv) {
-    nvg::BeginPath();
-    nvg::RoundedRect(uv - vec2(20, 20)/2, vec2(20, 20), 4);
-    nvg::FillColor(vec4(.99, .2, .92, .5));
-    nvg::Fill();
+void NotifyWarn(const string &in msg) {
+    UI::ShowNotification("Record Vehicle Raw Data", msg, vec4(.8, .2, .1, .3), 10000);
 }

@@ -1,9 +1,11 @@
 [meta]
-name     = "Player Trails"
+name     = "Record Raw Vehicle Data"
 author   = "XertroV"
-category = "Race"
-version  = "0.1.2"
+# category = "MLHook"
+category = "Replay"
+version  = "0.1.0"
 
 [script]
 #__DEFINES__
-dependencies = ["Camera", "VehicleState"]
+# dependencies = ["MLHook", "MLFeedRaceData", "VehicleState"]  # Might add respawn events or something in the future. I expect it's easy enough to infer from data, tho.
+dependencies = ["VehicleState"]
