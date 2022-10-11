@@ -1,10 +1,6 @@
 // per frame
 array<VehiclePosition@> positions;
 
-// fix intellisense
-#if false
-array positions;
-#endif
 
 string LastRecordedMap = "";
 
