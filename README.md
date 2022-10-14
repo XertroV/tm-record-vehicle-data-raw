@@ -28,6 +28,6 @@ Authors: XertroV
 
 Suggestions/feedback: @XertroV on Openplanet discord
 
-Code/issues: [https://github.com/XertroV/tm-record-vehicle-raw-data](https://github.com/XertroV/tm-record-vehicle-raw-data)
+Code/issues: [https://github.com/XertroV/tm-record-vehicle-data-raw](https://github.com/XertroV/tm-record-vehicle-data-raw)
 
 GL HF
