@@ -12,14 +12,24 @@ bool IsInGame(bool checkIfPlaying = false) {
     if (app.RootMap is null) return false;
     try {
         if (checkIfPlaying) {
-            auto gt = cast<CGameTerminal>(app.CurrentPlayground.GameTerminals[0]);
-            return gt.UISequence_Current == SGamePlaygroundUIConfig::EUISequence::Playing;
+            return Impl_IsCurrentlyPlaying();
         }
         return true;
     } catch {
         // trace('exception: ' + getExceptionInfo());
     }
     return false;
+}
+
+bool Impl_IsCurrentlyPlaying() {
+    auto app = cast<CTrackMania>(GetApp());
+    auto uic = app.CurrentPlayground.UIConfigs[0];
+    return uic.UISequence ==
+#if NEXT
+        SGamePlaygroundUIConfig::EUISequence::Playing;
+#else
+        CGamePlaygroundUIConfig::EUISequence::Playing;
+#endif
 }
 
 bool keyDown_ctrl = false;

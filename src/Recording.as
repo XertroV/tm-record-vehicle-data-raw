@@ -45,19 +45,21 @@ class VehiclePosition {
         auto vs = VehicleState::ViewingPlayerState();
         if (vs is null) return;
         Position = vs.Position;
-        Left = vs.Left;
-        Up = vs.Up;
-        Dir = vs.Dir;
         WorldVel = vs.WorldVel;
-        WorldCarUp = vs.WorldCarUp;
-        IsGroundContact = vs.IsGroundContact;
-        IsWheelsBurning = vs.IsWheelsBurning;
-        IsReactorGroundMode = vs.IsReactorGroundMode;
         CurGear = vs.CurGear;
         FrontSpeed = vs.FrontSpeed;
         InputSteer = vs.InputSteer;
         InputGasPedal = vs.InputGasPedal;
         InputBrakePedal = vs.InputBrakePedal;
+#if TMNEXT
+        Left = vs.Left;
+        Up = vs.Up;
+        Dir = vs.Dir;
+        WorldCarUp = vs.WorldCarUp;
+        IsGroundContact = vs.IsGroundContact;
+        IsWheelsBurning = vs.IsWheelsBurning;
+        IsReactorGroundMode = vs.IsReactorGroundMode;
+#endif
     }
 
     const string ToRowString() {
