@@ -25,7 +25,7 @@ bool Impl_IsCurrentlyPlaying() {
     auto app = cast<CTrackMania>(GetApp());
     auto uic = app.CurrentPlayground.UIConfigs[0];
     return uic.UISequence ==
-#if NEXT
+#if TMNEXT
         SGamePlaygroundUIConfig::EUISequence::Playing;
 #else
         CGamePlaygroundUIConfig::EUISequence::Playing;
