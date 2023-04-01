@@ -3,7 +3,7 @@ name     = "Record Raw Vehicle Data"
 author   = "XertroV"
 # category = "MLHook"
 category = "Replay"
-version  = "0.1.6"
+version  = "0.2.0"
 
 [script]
 #__DEFINES__
