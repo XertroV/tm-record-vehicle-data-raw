@@ -35,6 +35,26 @@ class VehiclePosition {
     float InputSteer;
     float InputGasPedal;
     float InputBrakePedal;
+    float FLSteerAngle;
+    float FLWheelRot;
+    float FLWheelRotSpeed;
+    float FLDamperLen;
+    float FLSlipCoef;
+    float FRSteerAngle;
+    float FRWheelRot;
+    float FRWheelRotSpeed;
+    float FRDamperLen;
+    float FRSlipCoef;
+    float RLSteerAngle;
+    float RLWheelRot;
+    float RLWheelRotSpeed;
+    float RLDamperLen;
+    float RLSlipCoef;
+    float RRSteerAngle;
+    float RRWheelRot;
+    float RRWheelRotSpeed;
+    float RRDamperLen;
+    float RRSlipCoef;
 
     VehiclePosition() {
         ts = Time::Now;
@@ -43,6 +63,7 @@ class VehiclePosition {
 
     private void PopulatePositionInfo() {
         auto vs = VehicleState::ViewingPlayerState();
+        VehicleState::GetAllVis(GetApp().GameScene);
         if (vs is null) return;
         Position = vs.Position;
         WorldVel = vs.WorldVel;
@@ -51,12 +72,32 @@ class VehiclePosition {
         InputSteer = vs.InputSteer;
         InputGasPedal = vs.InputGasPedal;
         InputBrakePedal = vs.InputBrakePedal;
-#if TMNEXT
         Left = vs.Left;
         Up = vs.Up;
         Dir = vs.Dir;
-        WorldCarUp = vs.WorldCarUp;
         IsGroundContact = vs.IsGroundContact;
+        FLSteerAngle = vs.FLSteerAngle;
+        FLWheelRot = vs.FLWheelRot;
+        FLWheelRotSpeed = vs.FLWheelRotSpeed;
+        FLDamperLen = vs.FLDamperLen;
+        FLSlipCoef = vs.FLSlipCoef;
+        FRSteerAngle = vs.FRSteerAngle;
+        FRWheelRot = vs.FRWheelRot;
+        FRWheelRotSpeed = vs.FRWheelRotSpeed;
+        FRDamperLen = vs.FRDamperLen;
+        FRSlipCoef = vs.FRSlipCoef;
+        RLSteerAngle = vs.RLSteerAngle;
+        RLWheelRot = vs.RLWheelRot;
+        RLWheelRotSpeed = vs.RLWheelRotSpeed;
+        RLDamperLen = vs.RLDamperLen;
+        RLSlipCoef = vs.RLSlipCoef;
+        RRSteerAngle = vs.RRSteerAngle;
+        RRWheelRot = vs.RRWheelRot;
+        RRWheelRotSpeed = vs.RRWheelRotSpeed;
+        RRDamperLen = vs.RRDamperLen;
+        RRSlipCoef = vs.RRSlipCoef;
+#if TMNEXT
+        WorldCarUp = vs.WorldCarUp;
         IsWheelsBurning = vs.IsWheelsBurning;
         IsReactorGroundMode = vs.IsReactorGroundMode;
 #endif
@@ -78,7 +119,27 @@ class VehiclePosition {
         ret += tostring(FrontSpeed) + ", ";
         ret += tostring(InputSteer) + ", ";
         ret += tostring(InputGasPedal) + ", ";
-        ret += tostring(InputBrakePedal); // + ", ";
+        ret += tostring(InputBrakePedal) + ", ";
+        ret += tostring(FLSteerAngle) + ", ";
+        ret += tostring(FLWheelRot) + ", ";
+        ret += tostring(FLWheelRotSpeed) + ", ";
+        ret += tostring(FLDamperLen) + ", ";
+        ret += tostring(FLSlipCoef) + ", ";
+        ret += tostring(FRSteerAngle) + ", ";
+        ret += tostring(FRWheelRot) + ", ";
+        ret += tostring(FRWheelRotSpeed) + ", ";
+        ret += tostring(FRDamperLen) + ", ";
+        ret += tostring(FRSlipCoef) + ", ";
+        ret += tostring(RLSteerAngle) + ", ";
+        ret += tostring(RLWheelRot) + ", ";
+        ret += tostring(RLWheelRotSpeed) + ", ";
+        ret += tostring(RLDamperLen) + ", ";
+        ret += tostring(RLSlipCoef) + ", ";
+        ret += tostring(RRSteerAngle) + ", ";
+        ret += tostring(RRWheelRot) + ", ";
+        ret += tostring(RRWheelRotSpeed) + ", ";
+        ret += tostring(RRDamperLen) + ", ";
+        ret += tostring(RRSlipCoef); // + ", ";
         return ret;
     }
 
@@ -99,6 +160,26 @@ class VehiclePosition {
         ret["InputSteer"] = InputSteer;
         ret["InputGasPedal"] = InputGasPedal;
         ret["InputBrakePedal"] = InputBrakePedal;
+        ret["FLSteerAngle"] = FLSteerAngle;
+        ret["FLWheelRot"] = FLWheelRot;
+        ret["FLWheelRotSpeed"] = FLWheelRotSpeed;
+        ret["FLDamperLen"] = FLDamperLen;
+        ret["FLSlipCoef"] = FLSlipCoef;
+        ret["FRSteerAngle"] = FRSteerAngle;
+        ret["FRWheelRot"] = FRWheelRot;
+        ret["FRWheelRotSpeed"] = FRWheelRotSpeed;
+        ret["FRDamperLen"] = FRDamperLen;
+        ret["FRSlipCoef"] = FRSlipCoef;
+        ret["RLSteerAngle"] = RLSteerAngle;
+        ret["RLWheelRot"] = RLWheelRot;
+        ret["RLWheelRotSpeed"] = RLWheelRotSpeed;
+        ret["RLDamperLen"] = RLDamperLen;
+        ret["RLSlipCoef"] = RLSlipCoef;
+        ret["RRSteerAngle"] = RRSteerAngle;
+        ret["RRWheelRot"] = RRWheelRot;
+        ret["RRWheelRotSpeed"] = RRWheelRotSpeed;
+        ret["RRDamperLen"] = RRDamperLen;
+        ret["RRSlipCoef"] = RRSlipCoef;
         return ret;
     }
 }
@@ -129,7 +210,27 @@ const array<string> DataColumnNames = {
     "FrontSpeed",
     "InputSteer",
     "InputGasPedal",
-    "InputBrakePedal"
+    "InputBrakePedal",
+    "FLSteerAngle",
+    "FLWheelRot",
+    "FLWheelRotSpeed",
+    "FLDamperLen",
+    "FLSlipCoef",
+    "FRSteerAngle",
+    "FRWheelRot",
+    "FRWheelRotSpeed",
+    "FRDamperLen",
+    "FRSlipCoef",
+    "RLSteerAngle",
+    "RLWheelRot",
+    "RLWheelRotSpeed",
+    "RLDamperLen",
+    "RLSlipCoef",
+    "RRSteerAngle",
+    "RRWheelRot",
+    "RRWheelRotSpeed",
+    "RRDamperLen",
+    "RRSlipCoef"
 };
 
 const string DataHeaderRow = string::Join(DataColumnNames, ", ");
