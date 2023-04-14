@@ -5,17 +5,17 @@ Results are saved automatically when recording is stopped.
 
 Data is saved in both CSV and JSON format.
 
-Works in TM2020 and MP4 (from version 0.2 onwards)
+Works in TM2020 and MP4 (once the next MP4 version of Openplanet is released)
 
 ### Currently Saved Data (each frame)
 
 * `vec3 Position`
-* `vec3 Left` *(TM2020 only)*
-* `vec3 Up` *(TM2020 only)*
-* `vec3 Dir` *(TM2020 only)*
+* `vec3 Left`
+* `vec3 Up`
+* `vec3 Dir`
 * `vec3 WorldVel`
 * `vec3 WorldCarUp` *(TM2020 only)*
-* `bool IsGroundContact` *(TM2020 only)*
+* `bool IsGroundContact`
 * `bool IsWheelsBurning` *(TM2020 only)*
 * `bool IsReactorGroundMode` *(TM2020 only)*
 * `uint CurGear`
@@ -23,9 +23,29 @@ Works in TM2020 and MP4 (from version 0.2 onwards)
 * `float InputSteer`
 * `float InputGasPedal`
 * `float InputBrakePedal`
+* `float FLSteerAngle`
+* `float FLWheelRot`
+* `float FLWheelRotSpeed`
+* `float FLDamperLen`
+* `float FLSlipCoef`
+* `float FRSteerAngle`
+* `float FRWheelRot`
+* `float FRWheelRotSpeed`
+* `float FRDamperLen`
+* `float FRSlipCoef`
+* `float RLSteerAngle`
+* `float RLWheelRot`
+* `float RLWheelRotSpeed`
+* `float RLDamperLen`
+* `float RLSlipCoef`
+* `float RRSteerAngle`
+* `float RRWheelRot`
+* `float RRWheelRotSpeed`
+* `float RRDamperLen`
+* `float RRSlipCoef`
 
 Gathered from [CSceneVehicleVisState](https://next.openplanet.dev/Scene/CSceneVehicleVisState) via [VehicleState](https://openplanet.dev/docs/reference/vehiclestate).
-Additional fields can be added on request (e.g., could add data for wheels with a toggle in settings)
+Additional fields can be added on request.
 
 -------
 
